@@ -11,11 +11,11 @@ def jsonIndent(amount):
     amount = amount * 4
     return " " * amount
 
-def jsonKeyValue(key, value):
-    return "\"" + key + "\"" + ": " + "\"" + value + "\""
+def jsonKeyValue(key, value, indent = 0):
+    return jsonIndent(indent) + jsonKey(key) + jsonValue(value)
 
-def jsonKey(key):
-    return "\"" + key + "\"" + ": "
+def jsonKey(key, indent = 0):
+    return jsonIndent(indent) + "\"" + key + "\"" + ": "
 
 def jsonValue(value):
     return "\"" + value + "\""
@@ -41,27 +41,26 @@ def createFile(filename, data):
 
 def blockStatesFile():
     data = jsonStart()
-    data += jsonIndent(1) + jsonKey("variants") + jsonStart()
-    data += jsonIndent(2)
-    data += jsonKey("normal") + "{ " + jsonKeyValue("model", modid + ":" + blockName) + "}"
+    data += jsonKey("variants", 1) + jsonStart()
+    data += jsonKey("normal", 2) + "{ " + jsonKeyValue("model", modid + ":" + blockName) + "}"
     data += jsonEnd(1)
     data += jsonEnd(0)
     return data
 
 def modelsItemFile():
     data = jsonStart()
-    data += jsonIndent(1) + jsonKeyValue("parent", modid + ":block/" + blockName) + ",\n"
-    data += jsonIndent(1) + jsonKey("textures") + jsonStart()
-    data += jsonIndent(2) + jsonKeyValue("layer0", modid + ":items/" + blockName)
+    data += jsonKeyValue("parent", modid + ":block/" + blockName, 1) + ",\n"
+    data += jsonKey("textures", 1) + jsonStart()
+    data += jsonKeyValue("layer0", modid + ":items/" + blockName, 2)
     data += jsonEnd(1)
     data += jsonEnd(0)
     return data
 
 def modelsBlockFile():
     data = jsonStart()
-    data += jsonIndent(1) + jsonKeyValue("parent", "block/cube_all") + ",\n"
-    data += jsonIndent(1) + jsonKey("textures") + jsonStart()
-    data += jsonIndent(2) + jsonKeyValue("all", modid + ":blocks/" + blockName)
+    data += jsonKeyValue("parent", "block/cube_all", 1) + ",\n"
+    data += jsonKey("textures", 1) + jsonStart()
+    data += jsonKeyValue("all", modid + ":blocks/" + blockName, 2)
     data += jsonEnd(1)
     data += jsonEnd(0)
     return data
