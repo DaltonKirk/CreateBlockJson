@@ -19,40 +19,36 @@ def jsonKey(key):
 def jsonValue(value):
     return "\"" + value + "\""
 
-print("input block name")
-blockName = input()
+blockName = input("block name: ")
+modid = input("modid: ")
 
-print("input modid")
-modid = input()
-
-#Create Blockstates
 filename = "blockstates/" + blockName + ".json"
 os.makedirs(os.path.dirname(filename), exist_ok=True)
-f2 = open(filename, "w+")
-f2.write(jsonStart())
-f2.write(jsonIndent(1) + jsonKey("variants") + jsonStart())
-f2.write(jsonIndent(2) + jsonKey("normal") + "{ " + jsonKeyValue("model", modid + ":" + blockName) + "}")
-f2.write(jsonEnd(1))
-f2.write(jsonEnd(0))
+with open(filename, "w+")as blockstateFile:
+    blockstateFile.write(jsonStart())
+    blockstateFile.write(jsonIndent(1) + jsonKey("variants") + jsonStart())
+    blockstateFile.write(jsonIndent(2) + jsonKey("normal") + "{ " + jsonKeyValue("model", modid + ":" + blockName) + "}")
+    blockstateFile.write(jsonEnd(1))
+    blockstateFile.write(jsonEnd(0))
 
 #Create models item json
 filename = "models/item/" + blockName + ".json"
 os.makedirs(os.path.dirname(filename), exist_ok=True)
-f = open(filename, "w+")
-f.write(jsonStart())
-f.write(jsonIndent(1) + jsonKeyValue("parent", modid + ":block/" + blockName) + ",\n")
-f.write(jsonIndent(1) + jsonKey("textures") + jsonStart())
-f.write(jsonIndent(2) + jsonKeyValue("layer0", modid + ":items/" + blockName))
-f.write(jsonEnd(1))
-f.write(jsonEnd(0))
+with open(filename, "w+") as modelsItemFile:
+    modelsItemFile.write(jsonStart())
+    modelsItemFile.write(jsonIndent(1) + jsonKeyValue("parent", modid + ":block/" + blockName) + ",\n")
+    modelsItemFile.write(jsonIndent(1) + jsonKey("textures") + jsonStart())
+    modelsItemFile.write(jsonIndent(2) + jsonKeyValue("layer0", modid + ":items/" + blockName))
+    modelsItemFile.write(jsonEnd(1))
+    modelsItemFile.write(jsonEnd(0))
 
 #Create models blocks
 filename = "models/block/" + blockName + ".json"
 os.makedirs(os.path.dirname(filename), exist_ok=True)
-f3 = open(filename, "w+")
-f3.write(jsonStart())
-f3.write(jsonIndent(1) + jsonKeyValue("parent", "block/cube_all") + ",\n")
-f3.write(jsonIndent(1) + jsonKey("textures") + jsonStart())
-f3.write(jsonIndent(2) + jsonKeyValue("all", modid + ":blocks/" + blockName))
-f3.write(jsonEnd(1))
-f3.write(jsonEnd(0))
+with open(filename, "w+") as modelsBlockFile:
+    modelsBlockFile.write(jsonStart())
+    modelsBlockFile.write(jsonIndent(1) + jsonKeyValue("parent", "block/cube_all") + ",\n")
+    modelsBlockFile.write(jsonIndent(1) + jsonKey("textures") + jsonStart())
+    modelsBlockFile.write(jsonIndent(2) + jsonKeyValue("all", modid + ":blocks/" + blockName))
+    modelsBlockFile.write(jsonEnd(1))
+    modelsBlockFile.write(jsonEnd(0))
