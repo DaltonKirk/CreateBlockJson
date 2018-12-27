@@ -1,7 +1,6 @@
 import os
 
-createdFiles = []
-
+# Declare Functions
 def jsonStart():
     return "{\n"
 
@@ -26,60 +25,50 @@ def deleteCreatedFiles():
     for file in createdFiles:
         print("Deleting: " + file)
         os.remove(file)
-    print("\n")  
+    print("\n")
 
+def createFile(filename, delegate):
+    try:
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
+        with open(filename, "w+")as newFile:
+            newFile.write(delegate)
+    except:
+        deleteCreatedFiles()
+        raise
+    else:
+        createdFiles.append(os.path.relpath(newFile.name))
+        print("Created" + os.path.relpath(newFile.name))
+
+def blockStatesFile():
+    data = jsonStart()
+    data += jsonIndent(1) + jsonKey("variants") + jsonStart()
+    data += jsonIndent(2) + jsonKey("normal") + "{ " + jsonKeyValue("model", modid + ":" + blockName) + "}"
+    data += jsonEnd(1)
+    data += jsonEnd(0)
+    return data
+
+def modelsItemFile():
+    data = jsonStart()
+    data += jsonIndent(1) + jsonKeyValue("parent", modid + ":block/" + blockName) + ",\n"
+    data += jsonIndent(1) + jsonKey("textures") + jsonStart()
+    data += jsonIndent(2) + jsonKeyValue("layer0", modid + ":items/" + blockName)
+    data += jsonEnd(1)
+    data += jsonEnd(0)
+    return data
+
+def modelsBlockFile():
+    data = jsonStart()
+    data += jsonIndent(1) + jsonKeyValue("parent", "block/cube_all") + ",\n"
+    data += jsonIndent(1) + jsonKey("textures") + jsonStart()
+    data += jsonIndent(2) + jsonKeyValue("all", modid + ":blocks/" + blockName)
+    data += jsonEnd(1)
+    data += jsonEnd(0)
+    return data
+
+# Run Script
+createdFiles = []
 blockName = input("block name: ")
 modid = input("modid: ")
-
-#Create blockstates file
-try:
-    filename = "blockstates/" + blockName + ".json"
-    os.makedirs(os.path.dirname(filename), exist_ok=True)
-    with open(filename, "w+")as blockstateFile:
-        blockstateFile.write(jsonStart())
-        blockstateFile.write(jsonIndent(1) + jsonKey("variants") + jsonStart())
-        blockstateFile.write(jsonIndent(2) + jsonKey("normal") + "{ " + jsonKeyValue("model", modid + ":" + blockName) + "}")
-        blockstateFile.write(jsonEnd(1))
-        blockstateFile.write(jsonEnd(0))
-except:
-    raise
-else:
-    createdFiles.append(os.path.relpath(blockstateFile.name))
-    print("Created" + os.path.relpath(blockstateFile.name))
-
-
-#Create models item json
-try:
-    filename = "models/item/" + blockName + ".json"
-    os.makedirs(os.path.dirname(filename), exist_ok=True)
-    with open(filename, "w+") as modelsItemFile:
-        modelsItemFile.write(jsonStart())
-        modelsItemFile.write(jsonIndent(1) + jsonKeyValue("parent", modid + ":block/" + blockName) + ",\n")
-        modelsItemFile.write(jsonIndent(1) + jsonKey("textures") + jsonStart())
-        modelsItemFile.write(jsonIndent(2) + jsonKeyValue("layer0", modid + ":items/" + blockName))
-        modelsItemFile.write(jsonEnd(1))
-        modelsItemFile.write(jsonEnd(0))
-except:
-    deleteCreatedFiles()
-    raise
-else:
-    createdFiles.append(os.path.relpath(modelsItemFile.name))
-    print("Created" + os.path.relpath(modelsItemFile.name))
-
-#Create models blocks
-try:
-    filename = "models/block/" + blockName + ".json"
-    os.makedirs(os.path.dirname(filename), exist_ok=True)
-    with open(filename, "w+") as modelsBlockFile:
-        modelsBlockFile.write(jsonStart())
-        modelsBlockFile.write(jsonIndent(1) + jsonKeyValue("parent", "block/cube_all") + ",\n")
-        modelsBlockFile.write(jsonIndent(1) + jsonKey("textures") + jsonStart())
-        modelsBlockFile.write(jsonIndent(2) + jsonKeyValue("all", modid + ":blocks/" + blockName))
-        modelsBlockFile.write(jsonEnd(1))
-        modelsBlockFile.write(jsonEnd(0))
-except:
-    deleteCreatedFiles()
-    raise
-else:
-    createdFiles.append(os.path.relpath(modelsBlockFile.name))
-    print("Created" + os.path.relpath(modelsBlockFile.name))
+createFile("blockstates/" + blockName + ".json", blockStatesFile())
+createFile("models/item/" + blockName + ".json", modelsItemFile())
+createFile("models/block/" + blockName + ".json", modelsBlockFile())
