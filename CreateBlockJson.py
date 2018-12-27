@@ -27,11 +27,11 @@ def deleteCreatedFiles():
         os.remove(file)
     print("\n")
 
-def createFile(filename, delegate):
+def createFile(filename, data):
     try:
         os.makedirs(os.path.dirname(filename), exist_ok=True)
         with open(filename, "w+")as newFile:
-            newFile.write(delegate)
+            newFile.write(data)
     except:
         deleteCreatedFiles()
         raise
@@ -42,7 +42,8 @@ def createFile(filename, delegate):
 def blockStatesFile():
     data = jsonStart()
     data += jsonIndent(1) + jsonKey("variants") + jsonStart()
-    data += jsonIndent(2) + jsonKey("normal") + "{ " + jsonKeyValue("model", modid + ":" + blockName) + "}"
+    data += jsonIndent(2)
+    data += jsonKey("normal") + "{ " + jsonKeyValue("model", modid + ":" + blockName) + "}"
     data += jsonEnd(1)
     data += jsonEnd(0)
     return data
