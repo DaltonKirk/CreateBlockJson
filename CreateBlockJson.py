@@ -50,6 +50,6 @@ def modelsBlockFile():
 createdFiles = []
 blockName = input("block name: ")
 modid = input("modid: ")
-createFile("blockstates/" + blockName + ".json", blockStatesFile())
-createFile("models/item/" + blockName + ".json", modelsItemFile())
-createFile("models/block/" + blockName + ".json", modelsBlockFile())
+createFile(f"blockstates/{blockName}.json", blockStatesFile())
+createFile(f"models/item/{blockName}.json", modelsItemFile())
+createFile(f"models/block/{blockName}.json", modelsBlockFile())
