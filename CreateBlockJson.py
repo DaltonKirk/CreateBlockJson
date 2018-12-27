@@ -1,55 +1,67 @@
-import os, json
+import os
+import json
 
-# Declare Functions
-def deleteCreatedFiles():
-    print("\nSomething went wrong")
-    for file in createdFiles:
-        print("Deleting: " + file)
-        os.remove(file)
-    print("\n")
+def delete_files(files):
+    for filename in files:
+        os.remove(filename)
 
-def createFile(filename, data):
+def create_file(filename, data, created_files):
     try:
         os.makedirs(os.path.dirname(filename), exist_ok=True)
-        with open(filename, "w+") as newFile:
-            jstr = json.dumps(data, indent=4)
-            newFile.write(jstr)
+        with open(filename, "w+") as new_file:
+            json.dump(data, new_file, indent=4)
     except:
-        deleteCreatedFiles()
+        print("\nSomething went wrong")
+        print("Deleting:", *created_files)
+        print("\n")
+        delete_files(created_files)
         raise
     else:
-        createdFiles.append(os.path.relpath(newFile.name))
-        print("Created" + os.path.relpath(newFile.name))
+        filepath = os.path.relpath(new_file.name)
+        created_files.append(filepath)
+        print("Created", filepath)
 
-def blockStatesFile():
+def block_states(modid, block_name):
     return {
         'variants': {
             'normal': {
-                'model': f"{modid}:{blockName}"
-            }
-        }
+                'model': f'{modid}:{block_name}',
+            },
+        },
     }
 
-def modelsItemFile():
+def models_item(modid, block_name):
     return {
-        'parent': f"{modid}:block/{blockName}",
+        'parent': f'{modid}:block/{block_name}',
         'textures': {
-            'layer0': f"{modid}:items/{blockName}"
-        }
+            'layer0': f'{modid}:items/{block_name}',
+        },
     }
 
-def modelsBlockFile():
+def models_block(modid, block_name):
     return {
         'parent': 'block/cube_all',
         'textures': {
-            'all': f"{modid}:blocks/{blockName}"
-        }
+            'all': f'{modid}:blocks/{block_name}',
+        },
     }
 
-# Run Script
-createdFiles = []
-blockName = input("block name: ")
-modid = input("modid: ")
-createFile(f"blockstates/{blockName}.json", blockStatesFile())
-createFile(f"models/item/{blockName}.json", modelsItemFile())
-createFile(f"models/block/{blockName}.json", modelsBlockFile())
+def main(modid, block_name):    
+    created_files = []
+    create_file(
+            f'blockstates/{block_name}.json',
+            block_states(modid, block_name),
+            created_files)
+    create_file(
+            f'models/item/{block_name}.json',
+            models_item(modid, block_name),
+            created_files)
+    create_file(
+            f'models/block/{block_name}.json',
+            models_block(modid, block_name),
+            created_files)
+
+if __name__ == '__main__':
+    block_name = input("block name: ")
+    modid = input("modid: ")
+    main(modid, block_name)
